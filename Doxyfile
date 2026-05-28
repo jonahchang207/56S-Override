@@ -1,0 +1,80 @@
+# Doxyfile for the 56S-Override / Vortex project.
+#
+# Generate the HTML docs from the project root with:
+#     doxygen Doxyfile
+# Then open docs/html/index.html in a browser.
+#
+# Only non-default settings are listed; everything else uses Doxygen's
+# built-in defaults. Run `doxygen -g Doxyfile.full` if you ever need the
+# fully-expanded reference Doxyfile.
+
+PROJECT_NAME           = "56S-Override"
+PROJECT_BRIEF          = "VEX V5 robot code with the Vortex odometry & motion library."
+PROJECT_NUMBER         =
+
+# --- Inputs ---------------------------------------------------------------
+
+# Sources we want documented. We intentionally exclude PROS/liblvgl
+# internals, the firmware binaries, and any generated/cache directories.
+INPUT                  = include src README.md
+FILE_PATTERNS          = *.h *.hpp *.c *.cpp *.md
+RECURSIVE              = YES
+
+EXCLUDE                = include/pros \
+                         include/liblvgl \
+                         include/api.h \
+                         bin \
+                         firmware \
+                         .d \
+                         .vscode
+
+# Use README.md as the front page if present.
+USE_MDFILE_AS_MAINPAGE = README.md
+
+# --- Source extraction ----------------------------------------------------
+
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+EXTRACT_PRIVATE        = NO
+EXTRACT_LOCAL_CLASSES  = YES
+
+# --- Output ---------------------------------------------------------------
+
+OUTPUT_DIRECTORY       = docs
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+GENERATE_LATEX         = NO
+GENERATE_XML           = NO
+
+# --- Style ----------------------------------------------------------------
+
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = YES
+MULTILINE_CPP_IS_BRIEF = NO
+ALWAYS_DETAILED_SEC    = NO
+INLINE_INHERITED_MEMB  = YES
+SORT_MEMBER_DOCS       = NO
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+REFERENCED_BY_RELATION = YES
+REFERENCES_RELATION    = YES
+
+# Pretty-up the class diagrams if Graphviz is installed.
+HAVE_DOT               = NO
+CLASS_DIAGRAMS         = YES
+UML_LOOK               = NO
+
+# --- Macro handling -------------------------------------------------------
+
+# api.h pulls in a small forest of macros from PROS; tell Doxygen not to
+# expand them or it will produce a lot of noise.
+MACRO_EXPANSION        = NO
+ENABLE_PREPROCESSING   = YES
+SKIP_FUNCTION_MACROS   = YES
+
+# --- Warnings -------------------------------------------------------------
+
+QUIET                  = YES
+WARNINGS               = YES
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
