@@ -11,6 +11,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <algorithm>
 
 namespace Vortex {
 
@@ -71,5 +72,19 @@ struct TrackerConfig {
   /** @brief @c true when this tracker is wired and should be used for odometry. */
   bool enabled() const { return port != 0; }
 };
+
+/**
+ * @brief Convert an @c int port list to the @c int8_t type required by @c pros::MotorGroup.
+ *
+ * PROS stores ports as signed bytes internally; keeping @c DrivetrainConfig in plain @c int
+ * makes the user-facing API more natural while this helper handles the narrowing at the
+ * single call-site in Config.cpp.
+ */
+inline std::vector<std::int8_t> to_motor_ports(const std::vector<int>& ports) {
+    std::vector<std::int8_t> out(ports.size());
+    std::transform(ports.begin(), ports.end(), out.begin(),
+                   [](int p) { return static_cast<std::int8_t>(p); });
+    return out;
+}
 
 }  // namespace Vortex

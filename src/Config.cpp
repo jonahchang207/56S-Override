@@ -92,8 +92,9 @@ const Vortex::TrackerConfig horizontal_tracker{
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
-pros::MotorGroup left_drive(Robot::drivetrain.left_ports);
-pros::MotorGroup right_drive(Robot::drivetrain.right_ports);
+// DrivetrainConfig uses std::vector<int> for ergonomics; PROS requires int8_t.
+pros::MotorGroup left_drive(Vortex::to_motor_ports(Robot::drivetrain.left_ports));
+pros::MotorGroup right_drive(Vortex::to_motor_ports(Robot::drivetrain.right_ports));
 
 pros::Imu imu(Robot::imu.port);
 
