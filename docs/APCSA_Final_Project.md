@@ -1,3 +1,8 @@
+---
+layout: default
+title: AP CSA Presentation Guide
+---
+
 # AP CSA Final Project — Presentation Guide
 ## Vortex: Autonomous Motion & Odometry for VEX Robotics (Team 56S-Override)
 

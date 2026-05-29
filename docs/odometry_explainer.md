@@ -1,3 +1,8 @@
+---
+layout: default
+title: Vortex Technical & API Explainer Guide
+---
+
 # Vortex Odometry System: Complete Technical & API Guide
 ## Team 56S-Override — AP Computer Science A Final Project
 **Developer:** Jonah Chang  
