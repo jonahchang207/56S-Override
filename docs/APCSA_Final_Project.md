@@ -140,6 +140,7 @@ void drive_test_auton() {
 
 **Example snippet — config in one place:**
 
+{% raw %}
 ```cpp
 namespace Robot {
   const Vortex::DrivetrainConfig drivetrain{{4, -5, -6}, {1, -2, 3}, 11.5, 3.25};
@@ -147,6 +148,7 @@ namespace Robot {
   const Vortex::TrackerConfig vertical_tracker{-18, 2.0, 0.0};
 }
 ```
+{% endraw %}
 
 **AP CSA connections to mention verbally**
 | Concept | In my project |
