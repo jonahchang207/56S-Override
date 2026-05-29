@@ -276,3 +276,52 @@ void opcontrol() {
 | `odom.heading_deg()` | Returns the current heading in degrees ($0 \dots 360$ CW from $+Y$). | `double degrees = odom.heading_deg();` |
 | `odom.print()` | Prints formatted pose telemetry beautifully in the PROS console. | `odom.print();` |
 | `odom.set_pose(x, y, heading)` | Changes coordinates instantly without restarting the background thread. | `odom.set_pose(0, 0, 90);` |
+
+---
+
+## 9. LemLib & EZ-Template Compatibility Layer (The Ultimate Hybrid API)
+To make Vortex incredibly easy to use, we've implemented a **dual compatibility layer** directly inside the `Chassis` class. Teammates who are already familiar with the APIs of **LemLib** or **EZ-Template** can use their favorite function names, and the code will work flawlessly!
+
+### A. LemLib Naming Conventions
+* **`chassis.calibrate()`**: Calibrates the IMU and resets odometry.
+* **`chassis.getPose()`**: Returns the current Pose struct ($X$, $Y$, and $\theta$).
+* **`chassis.setPose(x, y, heading)`**: Force-sets the coordinates and heading.
+* **`chassis.moveToPoint(x, y, timeout, params, async)`**: Asynchronously drives to a target point.
+* **`chassis.moveToPose(x, y, theta, timeout, params, async)`**: Asynchronously drives to a pose using the Boomerang algorithm.
+
+### B. EZ-Template Naming Conventions
+* **`chassis.pid_wait()`**: Blocks the autonomous thread until the active motion is complete.
+* **`chassis.pid_wait_until(progress)`**: Blocks until the active motion reaches a specific progress (0.0 to 1.0).
+* **`chassis.drive_angle_set(heading)`**: Sets the starting heading of the robot.
+* **`chassis.odom_xyt_set(x, y, heading)`**: Sets the starting coordinate and heading of the robot.
+* **`chassis.pid_drive_set(distance, speed_limit, slew)`**: Drives a relative distance asynchronously.
+* **`chassis.pid_turn_set(heading, speed_limit, slew)`**: Turns to an absolute heading asynchronously.
+* **`chassis.pid_turn_relative_set(delta, speed_limit, slew)`**: Turns a relative angle asynchronously.
+* **`chassis.pid_swing_set(swing_side, heading, speed_limit, opposite_speed, slew)`**: Point swing turn with one side locked.
+  * Supports standard constants: `ez::LEFT_SWING` and `ez::RIGHT_SWING`.
+* **`chassis.pid_odom_set(x, y, speed_limit, slew)`**: Moves to a coordinate point using odometry tracking.
+* **`chassis.pid_odom_set(x, y, heading, speed_limit, slew)`**: Moves to a pose coordinate using Boomerang tracking.
+
+#### Example: Hybrid Auton
+```cpp
+void autonomous() {
+  // 1. Set starting position (EZ-Template style)
+  chassis.odom_xyt_set(0.0, 0.0, 0.0);
+
+  // 2. Drive relative 24" asynchronously (EZ-Template style)
+  chassis.pid_drive_set(24.0, 110);
+  chassis.pid_wait(); // Block until done
+
+  // 3. Turn absolute to face a field coordinate asynchronously (LemLib style)
+  chassis.turnToPoint(24.0, 24.0, 2000);
+  chassis.pid_wait();
+
+  // 4. Move to (24, 24) ending at 90 degrees using Boomerang (EZ-Template style)
+  chassis.pid_odom_set(24.0, 24.0, 90.0, 110);
+  chassis.pid_wait();
+
+  // 5. Read back current pose (LemLib style)
+  Vortex::Pose final_pose = chassis.getPose();
+  printf("Finished auton at: X=%.1f, Y=%.1f\n", final_pose.x, final_pose.y);
+}
+```

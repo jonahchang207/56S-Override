@@ -285,8 +285,8 @@ class Wheel {
  * Vortex::Wheel vertical(-18, 2.0, 0.0);
  * Vortex::Wheel horizontal(19, 2.75, -4.75);
  * Vortex::Odometry odom(Vortex::OdomSensors(&imu)
- *                           .vertical(&vertical)
- *                           .horizontal(&horizontal));
+ *                           .with_vertical(&vertical)
+ *                           .with_horizontal(&horizontal));
  *
  * void initialize() {
  *   odom.init();  // calibrate IMU, zero encoders, set (0,0,0), start task
@@ -317,10 +317,10 @@ struct OdomSensors {
   explicit OdomSensors(pros::Imu* imu_sensor);
 
   OdomSensors& with_imu(pros::Imu* imu_sensor, bool use = true);
-  OdomSensors& vertical(Wheel* wheel);
-  OdomSensors& vertical2(Wheel* wheel);
-  OdomSensors& horizontal(Wheel* wheel);
-  OdomSensors& horizontal2(Wheel* wheel);
+  OdomSensors& with_vertical(Wheel* wheel);
+  OdomSensors& with_vertical2(Wheel* wheel);
+  OdomSensors& with_horizontal(Wheel* wheel);
+  OdomSensors& with_horizontal2(Wheel* wheel);
 
   /**
    * @brief Use averaged drive motor encoders when no tracking wheels exist.

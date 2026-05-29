@@ -157,22 +157,22 @@ OdomSensors& OdomSensors::with_imu(pros::Imu* imu_sensor, bool use) {
   return *this;
 }
 
-OdomSensors& OdomSensors::vertical(Wheel* wheel) {
+OdomSensors& OdomSensors::with_vertical(Wheel* wheel) {
   vertical = wheel;
   return *this;
 }
 
-OdomSensors& OdomSensors::vertical2(Wheel* wheel) {
+OdomSensors& OdomSensors::with_vertical2(Wheel* wheel) {
   vertical2 = wheel;
   return *this;
 }
 
-OdomSensors& OdomSensors::horizontal(Wheel* wheel) {
+OdomSensors& OdomSensors::with_horizontal(Wheel* wheel) {
   horizontal = wheel;
   return *this;
 }
 
-OdomSensors& OdomSensors::horizontal2(Wheel* wheel) {
+OdomSensors& OdomSensors::with_horizontal2(Wheel* wheel) {
   horizontal2 = wheel;
   return *this;
 }
@@ -205,10 +205,10 @@ OdomSensors make_odom_sensors(pros::Imu* imu, const Wheel* vertical,
     }
   };
 
-  attach(vertical, [&](Wheel* wheel) { sensors.vertical(wheel); });
-  attach(horizontal, [&](Wheel* wheel) { sensors.horizontal(wheel); });
-  attach(vertical2, [&](Wheel* wheel) { sensors.vertical2(wheel); });
-  attach(horizontal2, [&](Wheel* wheel) { sensors.horizontal2(wheel); });
+  attach(vertical, [&](Wheel* wheel) { sensors.with_vertical(wheel); });
+  attach(horizontal, [&](Wheel* wheel) { sensors.with_horizontal(wheel); });
+  attach(vertical2, [&](Wheel* wheel) { sensors.with_vertical2(wheel); });
+  attach(horizontal2, [&](Wheel* wheel) { sensors.with_horizontal2(wheel); });
 
   return sensors;
 }
