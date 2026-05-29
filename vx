@@ -8,15 +8,16 @@ cd "$REPO_ROOT"
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
 CYAN='\033[0;36m'; BOLD='\033[1m'; RESET='\033[0m'
+FOREST='\033[38;5;28m'
 
 banner() {
   printf '\n'
-  printf '%b  ██╗   ██╗ ██████╗ ██████╗ ████████╗███████╗██╗  ██╗%b\n' "${BOLD}${CYAN}" "${RESET}"
-  printf '%b  ██║   ██║██╔═══██╗██╔══██╗╚══██╔══╝██╔════╝╚██╗██╔╝%b\n' "${BOLD}${CYAN}" "${RESET}"
-  printf '%b  ██║   ██║██║   ██║██████╔╝   ██║   █████╗   ╚███╔╝ %b\n' "${BOLD}${CYAN}" "${RESET}"
-  printf '%b  ╚██╗ ██╔╝██║   ██║██╔══██╗   ██║   ██╔══╝   ██╔██╗ %b\n' "${BOLD}${CYAN}" "${RESET}"
-  printf '%b   ╚████╔╝ ╚██████╔╝██║  ██║   ██║   ███████╗██╔╝ ██╗%b\n' "${BOLD}${CYAN}" "${RESET}"
-  printf '%b    ╚═══╝   ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝%b\n' "${BOLD}${CYAN}" "${RESET}"
+  printf '%b  ██╗   ██╗ ██████╗ ██████╗ ████████╗███████╗██╗  ██╗%b\n' "${BOLD}${FOREST}" "${RESET}"
+  printf '%b  ██║   ██║██╔═══██╗██╔══██╗╚══██╔══╝██╔════╝╚██╗██╔╝%b\n' "${BOLD}${FOREST}" "${RESET}"
+  printf '%b  ██║   ██║██║   ██║██████╔╝   ██║   █████╗   ╚███╔╝ %b\n' "${BOLD}${FOREST}" "${RESET}"
+  printf '%b  ╚██╗ ██╔╝██║   ██║██╔══██╗   ██║   ██╔══╝   ██╔██╗ %b\n' "${BOLD}${FOREST}" "${RESET}"
+  printf '%b   ╚████╔╝ ╚██████╔╝██║  ██║   ██║   ███████╗██╔╝ ██╗%b\n' "${BOLD}${FOREST}" "${RESET}"
+  printf '%b    ╚═══╝   ╚═════╝ ╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝%b\n' "${BOLD}${FOREST}" "${RESET}"
   printf '\n'
   printf '%b  Team 56S-Override · Branch Manager%b\n' "${YELLOW}" "${RESET}"
   printf '  ─────────────────────────────────────\n'
