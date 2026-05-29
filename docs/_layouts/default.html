@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,24 +8,30 @@
   <style>
     /* ── Color palette (permanent dark mode) ────────────────────── */
     :root {
-      --fern-green:    #A8B8A0;
-      --slate-gray:    #B2C8B2;
-      --silver-shadow: #D1D1D1;
-      --link:          #A8C8A0;
-      --text:          #d8d8d8;
-      --text-muted:    #909090;
-      --bg:            #1e1e1e;
-      --surface:       #252525;
-      --surface-alt:   #2e2e2e;
-      --border:        #3a3a3a;
+      --fern-green: #5C7356;
+      --slate-gray: #708A74;
+      --silver-shadow: #6A8F65;
+      --link: #a8c8a0;
+      --text: #d8d8d8;
+      --text-muted: #909090;
+      --bg: #1e1e1e;
+      --surface: #787878;
+      --surface-alt: #2e2e2e;
+      --border: #3a3a3a;
     }
 
     /* ── Reset / base ────────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-                   'Helvetica Neue', Arial, sans-serif;
+        'Helvetica Neue', Arial, sans-serif;
       color: var(--text);
       background: var(--bg);
       line-height: 1.75;
@@ -39,7 +46,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
     }
 
     header .site-title {
@@ -51,7 +58,7 @@
     }
 
     header .site-subtitle {
-      color: rgba(255,255,255,0.82);
+      color: rgba(255, 255, 255, 0.82);
       font-size: 0.8rem;
       margin-top: 1px;
     }
@@ -75,7 +82,7 @@
     }
 
     nav a:hover {
-      background: rgba(0,0,0,0.12);
+      background: rgba(0, 0, 0, 0.12);
     }
 
     /* ── Main content ────────────────────────────────────────────── */
@@ -86,11 +93,16 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 6px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.35);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
     }
 
     /* ── Typography ──────────────────────────────────────────────── */
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       color: var(--fern-green);
       margin-top: 2rem;
       margin-bottom: 0.6rem;
@@ -110,14 +122,27 @@
       padding-bottom: 0.3rem;
     }
 
-    h3 { font-size: 1.1rem; }
+    h3 {
+      font-size: 1.1rem;
+    }
 
-    p { margin: 0.8rem 0; }
+    p {
+      margin: 0.8rem 0;
+    }
 
-    a { color: var(--link); text-decoration: none; }
-    a:hover { text-decoration: underline; color: var(--slate-gray); }
+    a {
+      color: var(--link);
+      text-decoration: none;
+    }
 
-    strong { color: #e8e8e8; }
+    a:hover {
+      text-decoration: underline;
+      color: var(--slate-gray);
+    }
+
+    strong {
+      color: #e8e8e8;
+    }
 
     hr {
       border: none;
@@ -126,8 +151,15 @@
     }
 
     /* ── Lists ───────────────────────────────────────────────────── */
-    ul, ol { padding-left: 1.6rem; margin: 0.6rem 0; }
-    li { margin: 0.3rem 0; }
+    ul,
+    ol {
+      padding-left: 1.6rem;
+      margin: 0.6rem 0;
+    }
+
+    li {
+      margin: 0.3rem 0;
+    }
 
     /* ── Blockquotes ─────────────────────────────────────────────── */
     blockquote {
@@ -193,11 +225,20 @@
       border-bottom: 1px solid var(--border);
     }
 
-    tbody tr:nth-child(even) td { background: var(--surface-alt); }
-    tbody tr:hover td { background: #333d33; }
+    tbody tr:nth-child(even) td {
+      background: var(--surface-alt);
+    }
+
+    tbody tr:hover td {
+      background: #333d33;
+    }
 
     /* ── Images ──────────────────────────────────────────────────── */
-    img { max-width: 100%; height: auto; border-radius: 4px; }
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
 
     /* ── Footer ──────────────────────────────────────────────────── */
     footer {
@@ -211,10 +252,24 @@
 
     /* ── Responsive ──────────────────────────────────────────────── */
     @media (max-width: 640px) {
-      header { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
-      nav { flex-wrap: wrap; }
-      main { margin: 1rem; padding: 0 1rem 2rem; }
-      h1 { font-size: 1.5rem; }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+      }
+
+      nav {
+        flex-wrap: wrap;
+      }
+
+      main {
+        margin: 1rem;
+        padding: 0 1rem 2rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
     }
   </style>
 
@@ -227,6 +282,7 @@
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
 </head>
+
 <body>
 
   <header>
@@ -251,4 +307,5 @@
   </footer>
 
 </body>
+
 </html>
