@@ -1,0 +1,8 @@
+title: Vortex Library
+description: Autonomous Motion & Odometry Library for VEX V5 · Team 56S-Override
+baseurl: "/56S-Override"
+url: "https://jonahchang207.github.io"
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
