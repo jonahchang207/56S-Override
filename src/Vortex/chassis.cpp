@@ -600,6 +600,8 @@ void Chassis::start_async(const MotionCommand& command) {
 
 bool Chassis::run_command(const MotionCommand& command) {
   switch (command.type) {
+    case MotionType::DRIVE_DISTANCE:
+      return run_drive_distance(command.distance, command.timeout_ms, command.max_voltage);
     case MotionType::TURN_HEADING:
       set_target("Turn", 0.0, 0.0, command.theta);
       return run_turn_to_heading(command.theta, command.timeout_ms,
@@ -1206,6 +1208,113 @@ double Chassis::interpolate_heading(double from_deg, double to_deg,
                                     double t) const {
   return from_deg + angle_error_deg(to_deg, from_deg) *
                         clamp_double(t, 0.0, 1.0);
+}
+
+// ===========================================================================
+// LemLib & EZ-Template Compatibility Layer (Highly User Friendly API)
+// ===========================================================================
+
+void Chassis::driveDistance(double distance_in, int timeout_ms, int max_voltage, bool slew, bool async) {
+  MotionCommand command;
+  command.type = MotionType::DRIVE_DISTANCE;
+  command.distance = distance_in;
+  command.timeout_ms = timeout_ms;
+  command.max_voltage = max_voltage;
+  command.slew = slew;
+  dispatch(command, async);
+}
+
+void Chassis::calibrate() {
+  if (odom_ != nullptr) {
+    odom_->calibrate();
+  }
+}
+
+Pose Chassis::getPose() const {
+  return odom_ ? odom_->get_pose() : Pose();
+}
+
+void Chassis::setPose(double x, double y, double heading) {
+  if (odom_ != nullptr) {
+    odom_->set_pose(x, y, heading);
+  }
+}
+
+void Chassis::pid_wait() {
+  waitUntilDone();
+}
+
+void Chassis::pid_wait_until(double progress) {
+  waitUntil(progress);
+}
+
+void Chassis::drive_angle_set(double heading_deg) {
+  if (odom_ != nullptr) {
+    odom_->set_heading_deg(heading_deg);
+  }
+}
+
+void Chassis::odom_xyt_set(double x_in, double y_in, double heading_deg) {
+  if (odom_ != nullptr) {
+    odom_->set_pose(x_in, y_in, heading_deg);
+  }
+}
+
+void Chassis::pid_drive_set(double distance_in, int max_speed, bool slew) {
+  driveDistance(distance_in, 3000, speed_to_voltage(max_speed), slew, true);
+}
+
+void Chassis::pid_turn_set(double heading_deg, int max_speed, bool slew) {
+  TurnToHeadingParams params;
+  params.max_speed = max_speed;
+  turnToHeading(heading_deg, 2000, params, true);
+}
+
+void Chassis::pid_turn_relative_set(double delta_deg, int max_speed, bool slew) {
+  if (odom_ != nullptr) {
+    double target = odom_->heading_deg() + delta_deg;
+    pid_turn_set(target, max_speed, slew);
+  }
+}
+
+void Chassis::pid_swing_set(DriveSide swing_side, double heading_deg, int max_speed,
+                            int opposite_side_speed, bool slew) {
+  SwingToHeadingParams params;
+  params.max_speed = max_speed;
+  
+  // LEFT_SWING (swing_side = LEFT) means Left side moves, so Right side is locked.
+  // RIGHT_SWING (swing_side = RIGHT) means Right side moves, so Left side is locked.
+  DriveSide locked = (swing_side == DriveSide::LEFT) ? DriveSide::RIGHT : DriveSide::LEFT;
+  swingToHeading(heading_deg, locked, 2000, params, true);
+}
+
+void Chassis::pid_swing_relative_set(DriveSide swing_side, double delta_deg, int max_speed,
+                                     int opposite_side_speed, bool slew) {
+  if (odom_ != nullptr) {
+    double target = odom_->heading_deg() + delta_deg;
+    pid_swing_set(swing_side, target, max_speed, opposite_side_speed, slew);
+  }
+}
+
+void Chassis::pid_odom_set(double x_in, double y_in, int max_speed, bool slew) {
+  MoveToPointParams params;
+  params.max_speed = max_speed;
+  params.slew = slew;
+  moveToPoint(x_in, y_in, 4000, params, true);
+}
+
+void Chassis::pid_odom_set(double x_in, double y_in, double heading_deg, int max_speed, bool slew) {
+  MoveToPoseParams params;
+  params.max_speed = max_speed;
+  params.slew = slew;
+  moveToPose(x_in, y_in, heading_deg, 4000, params, true);
+}
+
+void Chassis::pid_turn_set(std::pair<double, double> target_point, ::ez::DriveDirection dir, int max_speed) {
+  TurnToPointParams params;
+  params.max_speed = max_speed;
+  params.forwards = (dir == ::ez::fwd);
+  turnToPoint(target_point.first, target_point.second, 2000, params, true);
 }
 
 }  // namespace Vortex

@@ -213,6 +213,21 @@ enum class DriveSide {
   RIGHT,  ///< Right side held; left side drives the swing.
 };
 
+} // namespace Vortex
+
+namespace ez {
+  using DriveSide = ::Vortex::DriveSide;
+  inline constexpr DriveSide LEFT_SWING = DriveSide::RIGHT;
+  inline constexpr DriveSide RIGHT_SWING = DriveSide::LEFT;
+  
+  enum DriveDirection {
+    fwd,
+    rev
+  };
+}
+
+namespace Vortex {
+
 /** @brief Parameter bundle for Chassis::turnToHeading. */
 struct TurnToHeadingParams {
   AngularDirection direction = AngularDirection::AUTO;  ///< Direction hint.
@@ -635,9 +650,67 @@ class Chassis {
   /** @brief One row per drive motor with temperature + headroom percent. */
   std::vector<MotorTemperature> motorTemperatures() const;
 
+  // ===========================================================================
+  // LemLib & EZ-Template Compatibility Layer (Highly User Friendly API)
+  // ===========================================================================
+
+  /**
+   * @brief Asynchronous drive by relative distance (EZ-Template & LemLib waitable style).
+   */
+  void driveDistance(double distance_in, int timeout_ms = 3000,
+                     int max_voltage = 12000, bool slew = false, bool async = true);
+
+  /** @brief Calibrates the tracking sensors and IMU (LemLib style). */
+  void calibrate();
+
+  /** @brief Get the current robot pose (LemLib style). */
+  Pose getPose() const;
+
+  /** @brief Force-set the current robot pose (LemLib style). */
+  void setPose(double x, double y, double heading);
+
+  /** @brief Wait until the current asynchronous motion is complete (EZ-Template style). */
+  void pid_wait();
+
+  /** @brief Wait until the current motion has reached a progress threshold (EZ-Template style). */
+  void pid_wait_until(double progress);
+
+  /** @brief Force-set the starting heading angle in degrees (EZ-Template style). */
+  void drive_angle_set(double heading_deg);
+
+  /** @brief Force-set the starting position and heading in inches and degrees (EZ-Template style). */
+  void odom_xyt_set(double x_in, double y_in, double heading_deg);
+
+  /** @brief Drive a relative distance asynchronously using PID (EZ-Template style). */
+  void pid_drive_set(double distance_in, int max_speed, bool slew = false);
+
+  /** @brief Turn to face an absolute heading angle asynchronously using PID (EZ-Template style). */
+  void pid_turn_set(double heading_deg, int max_speed, bool slew = false);
+
+  /** @brief Turn relative to current heading asynchronously using PID (EZ-Template style). */
+  void pid_turn_relative_set(double delta_deg, int max_speed, bool slew = false);
+
+  /** @brief Perform a point swing turn to a target heading asynchronously using PID (EZ-Template style). */
+  void pid_swing_set(DriveSide swing_side, double heading_deg, int max_speed,
+                     int opposite_side_speed = 0, bool slew = false);
+
+  /** @brief Perform a relative swing turn asynchronously using PID (EZ-Template style). */
+  void pid_swing_relative_set(DriveSide swing_side, double delta_deg, int max_speed,
+                              int opposite_side_speed = 0, bool slew = false);
+
+  /** @brief Move to a field coordinate asynchronously using PID (EZ-Template style). */
+  void pid_odom_set(double x_in, double y_in, int max_speed, bool slew = false);
+
+  /** @brief Move to a field pose with final heading alignment asynchronously using Boomerang PID (EZ-Template style). */
+  void pid_odom_set(double x_in, double y_in, double heading_deg, int max_speed, bool slew = false);
+
+  /** @brief Turn to face a field point asynchronously using PID (EZ-Template style). */
+  void pid_turn_set(std::pair<double, double> target_point, ::ez::DriveDirection dir, int max_speed);
+
  private:
   enum class MotionType {
     NONE,
+    DRIVE_DISTANCE,
     TURN_HEADING,
     TURN_POINT,
     SWING_HEADING,
@@ -652,6 +725,9 @@ class Chassis {
     double x = 0.0;
     double y = 0.0;
     double theta = 0.0;
+    double distance = 0.0;
+    bool slew = false;
+    int max_voltage = 12000;
     int timeout_ms = 0;
     DriveSide locked_side = DriveSide::LEFT;
     TurnToHeadingParams turn_heading;
