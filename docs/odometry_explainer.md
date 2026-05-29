@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Vortex Technical & API Explainer Guide
+title: Odometry
 ---
 
-# Vortex Odometry System: Complete Technical & API Guide
-## Team 56S-Override — AP Computer Science A Final Project
-**Developer:** Jonah Chang  
+# Odometry
+
+Vortex tracks pose — `(x, y, θ)` in inches and radians — using a first-order circular arc approximation running in a 10 ms background task. This page covers the math, the embedded bugs we solved, and the full API reference.
 
 ---
 
@@ -279,8 +279,9 @@ void opcontrol() {
 
 ---
 
-## 9. LemLib & EZ-Template Compatibility Layer (The Ultimate Hybrid API)
-To make Vortex incredibly easy to use, we've implemented a **dual compatibility layer** directly inside the `Chassis` class. Teammates who are already familiar with the APIs of **LemLib** or **EZ-Template** can use their favorite function names, and the code will work flawlessly!
+## LemLib & EZ-Template Compat {#lemlib--ez-template-compat}
+
+Vortex ships a **dual compatibility layer** inside the `Chassis` class. Teammates already familiar with LemLib or EZ-Template can use the same function names they know — the calls route directly into Vortex's motion stack.
 
 ### A. LemLib Naming Conventions
 * **`chassis.calibrate()`**: Calibrates the IMU and resets odometry.
