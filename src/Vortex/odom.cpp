@@ -122,9 +122,10 @@ void MotorGroupDistanceSensor::reset() {
 Wheel::Wheel(int rotation_port, double wheel_diameter_in, double offset_in,
              double gear_ratio, bool reversed)
     : offset_in_(offset_in),
-      rotation_(std::make_unique<pros::Rotation>(rotation_port)),
+      rotation_(std::make_unique<pros::Rotation>(std::abs(rotation_port))),
       rotation_distance_(std::make_unique<RotationDistanceSensor>(
-          rotation_.get(), wheel_diameter_in, gear_ratio, reversed)),
+          rotation_.get(), wheel_diameter_in, gear_ratio,
+          (rotation_port < 0) != reversed)),
       sensor_(rotation_distance_.get()) {}
 
 Wheel::Wheel(pros::MotorGroup* motors, double wheel_diameter_in, double offset_in,
@@ -137,9 +138,10 @@ Wheel::Wheel(pros::MotorGroup* motors, double wheel_diameter_in, double offset_i
 Wheel::Wheel(const TrackerConfig& config) : offset_in_(config.offset_in) {
   if (!config.enabled()) return;
 
-  rotation_ = std::make_unique<pros::Rotation>(config.port);
+  rotation_ = std::make_unique<pros::Rotation>(std::abs(config.port));
   rotation_distance_ = std::make_unique<RotationDistanceSensor>(
-      rotation_.get(), config.diameter_in, config.gear_ratio, config.reversed);
+      rotation_.get(), config.diameter_in, config.gear_ratio,
+      (config.port < 0) != config.reversed);
   sensor_ = rotation_distance_.get();
 }
 

@@ -58,8 +58,8 @@ struct ImuConfig {
  *
  * @par Offsets
  * Measure from the robot’s center to the wheel contact point:
- * - Vertical (drive-parallel) wheel: positive = toward the front of the robot.
- * - Horizontal (sideways) wheel: positive = toward the right side.
+ * - Vertical (drive-parallel) wheel: positive = toward the right side of the robot.
+ * - Horizontal (sideways) wheel: positive = toward the front of the robot.
  */
 struct TrackerConfig {
   int port = 0;                 ///< Rotation sensor port; @c 0 = not installed.
