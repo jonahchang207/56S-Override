@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT="$(git -C "$(dirname "$0")" rev-parse --show-toplevel 2>/dev/null)" || {
+  printf 'Error: not inside a git repository.\n' >&2; exit 1
+}
+cd "$REPO_ROOT"
+
+RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'
+CYAN='\033[0;36m'; BOLD='\033[1m'; RESET='\033[0m'
+
+banner() {
+  printf '\n%b  56S-Override Branch Manager%b\n' "${BOLD}${CYAN}" "${RESET}"
+  printf '  ──────────────────────────────\n'
+}
+
+current_branch() { git rev-parse --abbrev-ref HEAD; }
+
+ensure_dev() {
+  local branch; branch=$(current_branch)
+  if [[ "$branch" != "dev" ]]; then
+    printf '%bError: switch to "dev" first (currently on "%s").%b\n' "${RED}" "$branch" "${RESET}"
+    return 1
+  fi
+}
+
+do_commit() {
+  ensure_dev || return
+  printf '\n%bCommit to dev%b\n' "${BOLD}" "${RESET}"
+  git status --short
+  printf '\n'
+  read -rp "  Commit message: " msg
+  [[ -z "$msg" ]] && { printf '%bAborted: empty message.%b\n' "${RED}" "${RESET}"; return; }
+  git add -A
+  git commit -m "$msg"
+  git push origin dev
+  printf '%b  Committed and pushed to dev.%b\n' "${GREEN}" "${RESET}"
+}
+
+do_deploy() {
+  ensure_dev || return
+  printf '\n%bDeploy dev \342\206\222 main%b\n' "${BOLD}" "${RESET}"
+
+  git fetch origin main --quiet
+  local ahead
+  ahead=$(git rev-list origin/main..dev --count 2>/dev/null || printf '?')
+  if [[ "$ahead" == "0" ]]; then
+    printf '  dev is already up to date with main. Nothing to deploy.\n'; return
+  fi
+  printf '  %b%s commit(s) ahead of main:%b\n' "${YELLOW}" "$ahead" "${RESET}"
+  git log origin/main..dev --oneline | sed 's/^/    /'
+  printf '\n'
+  read -rp "  Deploy to production? [y/N] " confirm
+  [[ "$confirm" =~ ^[Yy]$ ]] || { printf 'Aborted.\n'; return; }
+
+  git push origin dev
+  git checkout main
+  git pull origin main --quiet
+  git merge --no-ff dev -m "deploy: merge dev into main"
+  git push origin main
+  git checkout dev
+  printf '%b  Deployed successfully. Back on dev.%b\n' "${GREEN}" "${RESET}"
+}
+
+do_rollback() {
+  ensure_dev || return
+  printf '\n%bRollback dev%b\n' "${BOLD}" "${RESET}"
+  printf '  Recent commits on dev:\n'
+  git log --oneline -10 | sed 's/^/    /'
+  printf '\n'
+  read -rp "  How many commits to revert? [1] " n
+  n="${n:-1}"
+  if ! [[ "$n" =~ ^[0-9]+$ ]] || [[ "$n" -lt 1 ]]; then
+    printf '%bInvalid number.%b\n' "${RED}" "${RESET}"; return
+  fi
+  read -rp "  Revert last $n commit(s) on dev? [y/N] " confirm
+  [[ "$confirm" =~ ^[Yy]$ ]] || { printf 'Aborted.\n'; return; }
+
+  git revert --no-commit "HEAD~${n}..HEAD"
+  git commit -m "revert: roll back ${n} commit(s)"
+  git push origin dev
+  printf '%b  Reverted %s commit(s). History preserved on dev.%b\n' "${GREEN}" "$n" "${RESET}"
+}
+
+do_status() {
+  printf '\n%bStatus%b\n' "${BOLD}" "${RESET}"
+  printf '  Branch: %b%s%b\n' "${CYAN}" "$(current_branch)" "${RESET}"
+
+  printf '\n  %bdev (last 5):%b\n' "${BOLD}" "${RESET}"
+  git log dev --oneline -5 2>/dev/null | sed 's/^/    /' || printf '    (branch not found)\n'
+
+  printf '\n  %bmain (last 5):%b\n' "${BOLD}" "${RESET}"
+  git log main --oneline -5 2>/dev/null | sed 's/^/    /' || printf '    (branch not found)\n'
+
+  git fetch origin main --quiet 2>/dev/null || true
+  local ahead
+  ahead=$(git rev-list origin/main..dev --count 2>/dev/null || printf '?')
+  printf '\n  dev is %b%s commit(s)%b ahead of main\n' "${YELLOW}" "$ahead" "${RESET}"
+}
+
+main_menu() {
+  while true; do
+    banner
+    printf '  1) Commit to dev\n'
+    printf '  2) Deploy \342\206\222 main\n'
+    printf '  3) Rollback dev\n'
+    printf '  4) Status\n'
+    printf '  q) Quit\n\n'
+    read -rp "  Choose: " choice
+    case "$choice" in
+      1) do_commit ;;
+      2) do_deploy ;;
+      3) do_rollback ;;
+      4) do_status ;;
+      q|Q) printf '\n  Bye.\n\n'; exit 0 ;;
+      *) printf '%b  Invalid choice.%b\n' "${RED}" "${RESET}" ;;
+    esac
+    printf '\n'
+    read -rp "  Press Enter to continue..." _
+  done
+}
+
+main_menu
